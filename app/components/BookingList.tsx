@@ -21,7 +21,7 @@ export default function BookingList() {
   if (loading) return <p>Loading bookings...</p>;
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {bookings.map((b) => (
         <BookingCard key={b.id} booking={b} />
       ))}
