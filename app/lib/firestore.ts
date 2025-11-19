@@ -13,9 +13,29 @@ export interface Booking {
   phone?: string;
   pickupLocation?: string;
   dropoffLocation?: string;
+  pickupLocationCoords?: {
+    lat: number;
+    lng: number;
+  };
+  dropoffLocationCoords?: {
+    lat: number;
+    lng: number;
+  };
   distance?: number;
   total?: number;
   vehicleType?: string;
+  tripType?: string;
+  hours?: number;
+  gratuity?: number;
+  tax?: number;
+  ccFee?: number;
+  totals?: {
+    breakdown: Array<{ label: string; amount: number }>;
+    gratuity: number;
+    tax: number;
+    ccFee?: number;
+    total: number;
+  };
 }
 
 /**
@@ -36,14 +56,20 @@ export const fetchBookings = async (): Promise<Booking[]> => {
         data.createdAt = new Date().toISOString();
       }
 
+      let total = data.total;
+      if (!total && data.totals && data.totals.total) {
+        total = data.totals.total;
+      }
+
       // Ensure total is numeric (Firestore might store it as string)
-      if (data.total && typeof data.total === "string") {
-        data.total = parseFloat(data.total);
+      if (total && typeof total === "string") {
+        total = parseFloat(total);
       }
 
       return {
         id: doc.id,
         ...data,
+        total, // Override with extracted total
       } as Booking;
     });
 
